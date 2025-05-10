@@ -190,9 +190,9 @@
     <div class="terminal-body" id="terminalOutput">
       <div class="terminal-line">Initializing NoSQL Injection Lab...</div>
       <div class="terminal-line">Connected to MongoDB v6.0</div>
-      <div class="terminal-line">> Database: users_db</div>
-      <div class="terminal-line">> Collection: users</div>
-      <div class="terminal-line">> Documents: 3 (user1, user2, user3)</div>
+      <div class="terminal-line">> Welcome to NO SQL Injection Lab</div>
+      <div class="terminal-line">> This is a safe environment to test NO SQL injection techniques</div>
+      <div class="terminal-line">> Try injecting malicious code in the login form below</div>
       
       <div class="injection-lab">
         <h3>TEST LOGIN FORM</h3>
@@ -202,8 +202,7 @@
           
           <div class="attack-buttons">
             <button class="attack-btn" id="basicBypassBtn">Bypass to user1</button>
-            <button class="attack-btn" id="discoverUsersBtn">Discover user2</button>
-            <button class="attack-btn" id="discoverUser3Btn">Discover user3</button>
+            <button class="attack-btn" id="trueBtn">Always True</button>
             <button class="attack-btn" id="regexAttackBtn">Regex Attack</button>
             <button class="attack-btn" id="resetBtn">Reset</button>
           </div>
@@ -223,7 +222,7 @@
   </div>
 
   <script>
-    // Database simulation
+    // Database simulation (only user1 is accessible)
     const users = [
       { username: "user1", password: "abc123", email: "user1@example.com", role: "user" },
       { username: "user2", password: "def456", email: "user2@example.com", role: "admin" },
@@ -240,7 +239,7 @@
       terminal.scrollTop = terminal.scrollHeight;
     }
 
-    // Execute query simulation
+    // Execute query simulation (ONLY returns user1)
     function executeQuery() {
       const usernameInput = document.getElementById('nosql-username').value;
       const passwordInput = document.getElementById('nosql-password').value;
@@ -258,41 +257,31 @@
       
       addTerminalLine(`> Executing: db.users.find({ username: ${JSON.stringify(username)}, password: ${JSON.stringify(password)} })`);
       
-      // Simulate MongoDB query
-      let results = users.filter(user => {
-        // Handle $ne operator
-        if (typeof username === 'object' && username.$ne) {
-          return user.username !== username.$ne;
-        }
-        if (typeof password === 'object' && password.$ne) {
-          return user.password !== password.$ne;
-        }
-        
-        // Handle $nin operator
-        if (typeof username === 'object' && username.$nin) {
-          return !username.$nin.includes(user.username);
-        }
-        
-        // Handle $regex operator
-        if (typeof password === 'object' && password.$regex) {
-          const regex = new RegExp(password.$regex);
-          return regex.test(user.password);
-        }
-        
-        // Standard comparison
-        if (typeof username === 'string' && typeof password === 'string') {
-          return user.username === username && user.password === password;
-        }
-        
-        return false;
-      });
+      // Simulate MongoDB query (but only user1 can be logged into)
+      let loginSuccessful = false;
       
-      // Format response
+      // Check if it's a valid login (username + password match)
+      if (typeof username === 'string' && typeof password === 'string') {
+        loginSuccessful = users.some(user => user.username === username && user.password === password);
+      } 
+      // Otherwise, check if it's an injection attempt (always return user1)
+      else {
+        loginSuccessful = users.some(user => {
+          if (typeof username === 'object' && username.$ne) return user.username !== username.$ne;
+          if (typeof password === 'object' && password.$ne) return user.password !== password.$ne;
+          if (typeof username === 'object' && username.$nin) return !username.$nin.includes(user.username);
+          if (typeof password === 'object' && password.$regex) return new RegExp(password.$regex).test(user.password);
+          return false;
+        });
+      }
+      
+      // Format response (ALWAYS returns user1 if login is "successful")
       let response;
-      if (results.length === 0) {
+      if (!loginSuccessful) {
         response = `<span style="color: var(--warning-red)">Login failed - No matching users</span>`;
-      } else if (results.length === 1) {
-        const user = results[0];
+      } else {
+        const user = users[0]; // FORCE user1 as the result
+        
         if (typeof username === 'string' && typeof password === 'string') {
           response = `
             <span style="color: var(--hacker-green)">Good job! You really learned it!</span><br><br>
@@ -310,18 +299,12 @@
             Role: ${user.role}
           `;
         }
-      } else {
-        response = `
-          <span style="color: var(--warning-red)">[!] NoSQL Injection Detected</span><br><br>
-          <span style="color: var(--hacker-green)">Multiple users returned (${results.length})</span><br><br>
-          ${results.map(u => `Username: ${u.username} | Password: ${u.password}`).join('<br>')}
-        `;
       }
       
       document.getElementById('nosql-response').innerHTML = response;
       
       // Add breach effect if injection detected
-      if (results.length > 0) {
+      if (loginSuccessful) {
         document.querySelector('.cyber-terminal').classList.add('breach-effect');
         setTimeout(() => {
           document.querySelector('.cyber-terminal').classList.remove('breach-effect');
@@ -336,16 +319,10 @@
       addTerminalLine('> Loaded bypass to user1: {"$ne":"invalid"}');
     });
 
-    document.getElementById('discoverUsersBtn').addEventListener('click', () => {
-      document.getElementById('nosql-username').value = JSON.stringify({$nin: ["user1"]});
-      document.getElementById('nosql-password').value = JSON.stringify({$ne: "invalid"});
-      addTerminalLine('> Loaded discover user2: {"$nin":["user1"]}');
-    });
-
-    document.getElementById('discoverUser3Btn').addEventListener('click', () => {
-      document.getElementById('nosql-username').value = JSON.stringify({$nin: ["user1", "user2"]});
-      document.getElementById('nosql-password').value = JSON.stringify({$ne: "invalid"});
-      addTerminalLine('> Loaded discover user3: {"$nin":["user1","user2"]}');
+    document.getElementById('trueBtn').addEventListener('click', () => {
+      document.getElementById('nosql-username').value = JSON.stringify({$ne: null});
+      document.getElementById('nosql-password').value = JSON.stringify({$ne: null});
+      addTerminalLine('> Loaded always true: {"$ne":null}');
     });
 
     document.getElementById('regexAttackBtn').addEventListener('click', () => {
