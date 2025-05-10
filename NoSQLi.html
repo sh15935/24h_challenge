@@ -192,7 +192,7 @@
       <div class="terminal-line">Connected to MongoDB v6.0</div>
       <div class="terminal-line">> Database: users_db</div>
       <div class="terminal-line">> Collection: users</div>
-      <div class="terminal-line">> Documents: 3</div>
+      <div class="terminal-line">> Documents: 3 (user1, user2, user3)</div>
       
       <div class="injection-lab">
         <h3>TEST LOGIN FORM</h3>
@@ -201,10 +201,10 @@
           <input type="text" id="nosql-password" class="form-input" placeholder="PASSWORD (JSON format)">
           
           <div class="attack-buttons">
-            <button class="attack-btn" id="basicBypassBtn">Basic Bypass</button>
-            <button class="attack-btn" id="discoverUsersBtn">Discover Users</button>
+            <button class="attack-btn" id="basicBypassBtn">Bypass to user1</button>
+            <button class="attack-btn" id="discoverUsersBtn">Discover user2</button>
+            <button class="attack-btn" id="discoverUser3Btn">Discover user3</button>
             <button class="attack-btn" id="regexAttackBtn">Regex Attack</button>
-            <button class="attack-btn" id="legitLoginBtn">Legit Login</button>
             <button class="attack-btn" id="resetBtn">Reset</button>
           </div>
           
@@ -280,8 +280,11 @@
         }
         
         // Standard comparison
-        return (username === "" || user.username === username) && 
-               (password === "" || user.password === password);
+        if (typeof username === 'string' && typeof password === 'string') {
+          return user.username === username && user.password === password;
+        }
+        
+        return false;
       });
       
       // Format response
@@ -290,13 +293,23 @@
         response = `<span style="color: var(--warning-red)">Login failed - No matching users</span>`;
       } else if (results.length === 1) {
         const user = results[0];
-        response = `
-          <span style="color: var(--hacker-green)">Login successful as ${user.username}</span><br><br>
-          <span style="color: var(--cyber-blue)">User details:</span><br>
-          Username: ${user.username}<br>
-          Email: ${user.email}<br>
-          Role: ${user.role}
-        `;
+        if (typeof username === 'string' && typeof password === 'string') {
+          response = `
+            <span style="color: var(--hacker-green)">Good job! You really learned it!</span><br><br>
+            <span style="color: var(--cyber-blue)">Successfully logged in as ${user.username}</span><br>
+            Username: ${user.username}<br>
+            Password: ${user.password}<br>
+            Email: ${user.email}
+          `;
+        } else {
+          response = `
+            <span style="color: var(--hacker-green)">Successfully logged in as ${user.username}</span><br><br>
+            <span style="color: var(--cyber-blue)">User details:</span><br>
+            Username: ${user.username}<br>
+            Email: ${user.email}<br>
+            Role: ${user.role}
+          `;
+        }
       } else {
         response = `
           <span style="color: var(--warning-red)">[!] NoSQL Injection Detected</span><br><br>
@@ -308,7 +321,7 @@
       document.getElementById('nosql-response').innerHTML = response;
       
       // Add breach effect if injection detected
-      if (results.length > 1) {
+      if (results.length > 0) {
         document.querySelector('.cyber-terminal').classList.add('breach-effect');
         setTimeout(() => {
           document.querySelector('.cyber-terminal').classList.remove('breach-effect');
@@ -320,25 +333,25 @@
     document.getElementById('basicBypassBtn').addEventListener('click', () => {
       document.getElementById('nosql-username').value = JSON.stringify({$ne: "invalid"});
       document.getElementById('nosql-password').value = JSON.stringify({$ne: "invalid"});
-      addTerminalLine('> Loaded Basic Bypass: {"$ne":"invalid"}');
+      addTerminalLine('> Loaded bypass to user1: {"$ne":"invalid"}');
     });
 
     document.getElementById('discoverUsersBtn').addEventListener('click', () => {
       document.getElementById('nosql-username').value = JSON.stringify({$nin: ["user1"]});
       document.getElementById('nosql-password').value = JSON.stringify({$ne: "invalid"});
-      addTerminalLine('> Loaded User Discovery: {"$nin":["user1"]}');
+      addTerminalLine('> Loaded discover user2: {"$nin":["user1"]}');
+    });
+
+    document.getElementById('discoverUser3Btn').addEventListener('click', () => {
+      document.getElementById('nosql-username').value = JSON.stringify({$nin: ["user1", "user2"]});
+      document.getElementById('nosql-password').value = JSON.stringify({$ne: "invalid"});
+      addTerminalLine('> Loaded discover user3: {"$nin":["user1","user2"]}');
     });
 
     document.getElementById('regexAttackBtn').addEventListener('click', () => {
       document.getElementById('nosql-username').value = '"user1"';
       document.getElementById('nosql-password').value = JSON.stringify({$regex: "^a"});
-      addTerminalLine('> Loaded Regex Attack: {"$regex":"^a"}');
-    });
-
-    document.getElementById('legitLoginBtn').addEventListener('click', () => {
-      document.getElementById('nosql-username').value = '"user1"';
-      document.getElementById('nosql-password').value = '"abc123"';
-      addTerminalLine('> Loaded legitimate credentials for user1');
+      addTerminalLine('> Loaded regex attack: {"$regex":"^a"}');
     });
 
     document.getElementById('resetBtn').addEventListener('click', () => {
@@ -356,6 +369,12 @@
         executeQuery();
       }
     });
+
+    // Initial terminal message
+    setTimeout(() => {
+      addTerminalLine("> Try to login using NoSQL injection techniques");
+      addTerminalLine("> Use the buttons to load common attack patterns");
+    }, 1000);
   </script>
 </body>
 </html>
