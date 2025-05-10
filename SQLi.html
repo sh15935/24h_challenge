@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SQL INJECTION LAB</title>
+  <link href="https://fonts.googleapis.com/css2?family=Major+Mono+Display&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --hacker-green: #00ff41;
+      --matrix-green: #008f11;
+      --cyber-blue: #00f2ff;
+      --warning-red: #ff003c;
+      --dark-bg: #0a0a12;
+      --darker-bg: #050510;
+      --terminal-bg: rgba(10, 10, 18, 0.95);
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Share Tech Mono', monospace;
+      overflow: hidden;
+      background-color: var(--darker-bg);
+      color: var(--hacker-green);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* === BINARY RAIN BACKGROUND === */
+    .binary-rain {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .binary-digit {
+      position: absolute;
+      color: rgba(0, 255, 65, 0.3);
+      font-size: 16px;
+      animation: fall linear infinite;
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    @keyframes fall {
+      to { transform: translateY(100vh); }
+    }
+
+    /* === MAIN TERMINAL CONTAINER === */
+    .cyber-terminal {
+      width: 90%;
+      max-width: 800px;
+      height: 80vh;
+      border: 1px solid var(--hacker-green);
+      box-shadow: 0 0 20px var(--hacker-green);
+      background: var(--terminal-bg);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .terminal-header {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 10px 15px;
+      border-bottom: 1px solid var(--hacker-green);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .terminal-title {
+      font-family: 'Major Mono Display', monospace;
+      color: var(--hacker-green);
+      text-shadow: 0 0 5px var(--hacker-green);
+      letter-spacing: 2px;
+      margin: 0;
+      font-size: 1.2rem;
+    }
+
+    .terminal-controls span {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-left: 5px;
+    }
+
+    .terminal-controls span:nth-child(1) { background: #ff5f56; }
+    .terminal-controls span:nth-child(2) { background: #ffbd2e; }
+    .terminal-controls span:nth-child(3) { background: #27c93f; }
+
+    /* === TERMINAL CONTENT AREA === */
+    .terminal-body {
+      padding: 20px;
+      flex-grow: 1;
+      overflow-y: auto;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .terminal-line {
+      margin-bottom: 10px;
+      animation: typeIn 0.1s forwards;
+      opacity: 0;
+    }
+
+    @keyframes typeIn {
+      to { opacity: 1; }
+    }
+
+    /* === INJECTION LAB AREA === */
+    .injection-lab {
+      margin-top: 20px;
+      padding-top: 20px;
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 20px;
+      max-width: 500px;
+    }
+
+    .form-input {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--matrix-green);
+      color: var(--hacker-green);
+      padding: 12px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 16px;
+    }
+
+    .form-input::placeholder {
+      color: var(--matrix-green);
+    }
+
+    .attack-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .attack-btn {
+      background: transparent;
+      border: 1px solid var(--cyber-blue);
+      color: var(--cyber-blue);
+      padding: 8px 12px;
+      cursor: pointer;
+      font-family: 'Share Tech Mono', monospace;
+      transition: all 0.3s;
+      font-size: 14px;
+    }
+
+    .attack-btn:hover {
+      background: rgba(0, 242, 255, 0.1);
+    }
+
+    .execute-btn {
+      background: var(--hacker-green);
+      color: black;
+      border: none;
+      padding: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      font-family: 'Major Mono Display', monospace;
+      letter-spacing: 1px;
+      transition: all 0.3s;
+      font-size: 16px;
+      max-width: 200px;
+    }
+
+    .execute-btn:hover {
+      box-shadow: 0 0 10px var(--hacker-green);
+    }
+
+    /* === RESPONSE AREA === */
+    .response-area {
+      border: 1px solid var(--matrix-green);
+      padding: 15px;
+      margin-top: 20px;
+      min-height: 100px;
+      background: rgba(0, 0, 0, 0.2);
+      position: relative;
+    }
+
+    .response-title {
+      position: absolute;
+      top: -10px;
+      left: 10px;
+      background: var(--terminal-bg);
+      padding: 0 5px;
+      color: var(--hacker-green);
+    }
+
+    /* === FOOTER === */
+    .terminal-footer {
+      text-align: center;
+      padding: 10px;
+      border-top: 1px solid var(--matrix-green);
+      font-size: 12px;
+      color: var(--matrix-green);
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    /* === ANIMATIONS === */
+    @keyframes breach {
+      0% { box-shadow: 0 0 5px var(--hacker-green); }
+      50% { box-shadow: 0 0 20px var(--warning-red); }
+      100% { box-shadow: 0 0 5px var(--hacker-green); }
+    }
+
+    .breach-effect {
+      animation: breach 0.5s 3;
+    }
+  </style>
+</head>
+<body>
+  <!-- Binary Rain Background -->
+  <div class="binary-rain" id="binaryRain"></div>
+  
+  <!-- Main terminal container -->
+  <div class="cyber-terminal">
+    <div class="terminal-header">
+      <h1 class="terminal-title">SQL_INJECTION_LAB.EXE</h1>
+      <div class="terminal-controls">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+    
+    <div class="terminal-body" id="terminalOutput">
+      <div class="terminal-line">Initializing Cyber Security Lab...</div>
+      <div class="terminal-line">Loading SQL Injection Module...</div>
+      <div class="terminal-line">Establishing connection to test database...</div>
+      <div class="terminal-line" style="animation-delay: 0.3s">> Welcome to SQL Injection Lab</div>
+      <div class="terminal-line" style="animation-delay: 0.6s">> This is a safe environment to test SQL injection techniques</div>
+      <div class="terminal-line" style="animation-delay: 0.9s">> Try injecting malicious code in the login form below</div>
+      
+      <div class="injection-lab">
+        <h3>TEST LOGIN FORM</h3>
+        <div class="login-form">
+          <input type="text" id="username" class="form-input" placeholder="USERNAME">
+          <input type="password" id="password" class="form-input" placeholder="PASSWORD">
+          
+          <div class="attack-buttons">
+            <button class="attack-btn" onclick="loadAttack('1=1')">Basic Bypass</button>
+            <button class="attack-btn" onclick="loadAttack('\' OR \'1\'=\'1')">Always True</button>
+            <button class="attack-btn" onclick="loadAttack('admin\' --')">Comment Attack</button>
+          </div>
+          
+          <button class="execute-btn" onclick="executeQuery()">EXECUTE QUERY</button>
+        </div>
+        
+        <div class="response-area" id="responseArea">
+          <div class="response-title">DATABASE RESPONSE</div>
+          <div id="responseContent">Awaiting query execution...</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="terminal-footer">
+      WARNING: FOR EDUCATIONAL PURPOSES ONLY | © 2025 CYBER SECURITY LAB
+    </div>
+  </div>
+
+  <script>
+    // Create binary rain effect
+    function createBinaryRain() {
+      const container = document.getElementById('binaryRain');
+      const digits = '01';
+      const count = Math.floor(window.innerWidth / 15);
+      
+      for (let i = 0; i < count; i++) {
+        const digit = document.createElement('div');
+        digit.className = 'binary-digit';
+        digit.textContent = digits.charAt(Math.floor(Math.random() * digits.length));
+        
+        // Random properties for each digit
+        const left = Math.random() * 100;
+        const animationDuration = 5 + Math.random() * 10;
+        const delay = Math.random() * 5;
+        const opacity = 0.1 + Math.random() * 0.3;
+        
+        digit.style.left = ${left}%;
+        digit.style.animationDuration = ${animationDuration}s;
+        digit.style.animationDelay = ${delay}s;
+        digit.style.opacity = opacity;
+        
+        // Change digits periodically
+        setInterval(() => {
+          digit.textContent = digits.charAt(Math.floor(Math.random() * digits.length));
+        }, 100 + Math.random() * 900);
+        
+        container.appendChild(digit);
+      }
+    }
+
+    // Load predefined attack
+    function loadAttack(attack) {
+      document.getElementById('username').value = attack;
+      document.getElementById('password').value = 'password';
+      addTerminalLine(> Loaded attack pattern: ${attack});
+    }
+
+    // Execute the SQL query simulation
+    function executeQuery() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      
+      addTerminalLine(> Executing: SELECT * FROM users WHERE username='${username}' AND password='${password}');
+      
+      // Simulate different responses based on input
+      let response = "";
+      const responseArea = document.getElementById('responseContent');
+      const terminal = document.getElementById('terminalOutput');
+      
+      if (username.includes("' OR '1'='1") || username.includes("' --") || username.includes("1=1")) {
+        // Successful injection
+        response = `
+          <span style="color: var(--warning-red)">[!] SQL INJECTION DETECTED</span><br><br>
+          <span style="color: var(--hacker-green)">Query executed successfully!</span><br>
+          <span style="color: var(--cyber-blue)">Returned all user records:</span><br><br>
+          ID: 1 | Username: souma | Password: 1234567<br>
+          ID: 2 | Username: kanchii | Password: 20032004<br>
+          ID: 3 | Username: youn | Password: password<br>
+        `;
+        
+        // Add breach effect
+        document.querySelector('.cyber-terminal').classList.add('breach-effect');
+        setTimeout(() => {
+          document.querySelector('.cyber-terminal').classList.remove('breach-effect');
+        }, 1500);
+        
+        addTerminalLine(> <span style="color: var(--warning-red)">SECURITY BREACH!</span> Database records exposed);
+      } else if (username === 'admin' && password === 'password') {
+        // Normal login
+        response = `
+          <span style="color: var(--hacker-green)">Login successful!</span><br>
+          Welcome back, admin.
+        `;
+        addTerminalLine(> Authentication successful for user: admin);
+      } else {
+        // Failed login
+        response = `
+          <span style="color: var(--warning-red)">Login failed!</span><br>
+          Invalid username or password.
+        `;
+        addTerminalLine(> Authentication failed for provided credentials);
+      }
+      
+      responseArea.innerHTML = response;
+      
+      // Auto-scroll terminal
+      terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    // Add line to terminal
+    function addTerminalLine(text) {
+      const terminal = document.getElementById('terminalOutput');
+      const line = document.createElement('div');
+      line.className = 'terminal-line';
+      line.innerHTML = > ${text};
+      terminal.appendChild(line);
+    }
+
+    // Initialize on load
+    window.addEventListener('load', () => {
+      createBinaryRain();
+      
+      // Add initial terminal lines with delay
+      setTimeout(() => {
+        addTerminalLine("System ready");
+        addTerminalLine("Type commands or test the login form below");
+      }, 1500);
+    });
+  </script>
+</body>
+</html>
