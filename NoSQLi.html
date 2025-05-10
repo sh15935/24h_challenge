@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Injection Labs Portal</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SQL INJECTION LAB</title>
   <link href="https://fonts.googleapis.com/css2?family=Major+Mono+Display&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -29,7 +29,7 @@
       align-items: center;
     }
 
-    /* Binary Rain Background */
+    /* === BINARY RAIN BACKGROUND === */
     .binary-rain {
       position: fixed;
       top: 0;
@@ -52,153 +52,174 @@
       to { transform: translateY(100vh); }
     }
 
-    /* Main Container */
-    .portal-container {
+    /* === MAIN TERMINAL CONTAINER === */
+    .cyber-terminal {
       width: 90%;
       max-width: 800px;
-      text-align: center;
-      animation: fadeIn 1.5s ease-in;
+      height: 80vh;
+      border: 1px solid var(--hacker-green);
+      box-shadow: 0 0 20px var(--hacker-green);
+      background: var(--terminal-bg);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; }
+    .terminal-header {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 10px 15px;
+      border-bottom: 1px solid var(--hacker-green);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .terminal-title {
+      font-family: 'Major Mono Display', monospace;
+      color: var(--hacker-green);
+      text-shadow: 0 0 5px var(--hacker-green);
+      letter-spacing: 2px;
+      margin: 0;
+      font-size: 1.2rem;
+    }
+
+    .terminal-controls span {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-left: 5px;
+    }
+
+    .terminal-controls span:nth-child(1) { background: #ff5f56; }
+    .terminal-controls span:nth-child(2) { background: #ffbd2e; }
+    .terminal-controls span:nth-child(3) { background: #27c93f; }
+
+    /* === TERMINAL CONTENT AREA === */
+    .terminal-body {
+      padding: 20px;
+      flex-grow: 1;
+      overflow-y: auto;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .terminal-line {
+      margin-bottom: 10px;
+      animation: typeIn 0.1s forwards;
+      opacity: 0;
+    }
+
+    @keyframes typeIn {
       to { opacity: 1; }
     }
 
-    /* Header */
-    .portal-header {
-      margin-bottom: 40px;
-      text-shadow: 0 0 10px var(--hacker-green);
+    /* === INJECTION LAB AREA === */
+    .injection-lab {
+      margin-top: 20px;
+      padding-top: 20px;
     }
 
-    .portal-title {
-      font-family: 'Major Mono Display', monospace;
-      font-size: 2.5rem;
-      margin-bottom: 10px;
-      color: var(--hacker-green);
-    }
-
-    .portal-subtitle {
-      font-size: 1rem;
-      color: var(--matrix-green);
-      margin-bottom: 20px;
-    }
-
-    .portal-divider {
-      width: 50%;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--hacker-green), transparent);
-      margin: 20px auto;
-      border: none;
-    }
-
-    /* Lab Cards */
-    .lab-cards {
+    .login-form {
       display: flex;
-      justify-content: center;
-      gap: 30px;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 20px;
+      max-width: 500px;
+    }
+
+    .form-input {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--matrix-green);
+      color: var(--hacker-green);
+      padding: 12px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 16px;
+    }
+
+    .form-input::placeholder {
+      color: var(--matrix-green);
+    }
+
+    .attack-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
       flex-wrap: wrap;
     }
 
-    .lab-card {
-      width: 300px;
-      background: var(--terminal-bg);
-      border: 1px solid var(--matrix-green);
-      border-radius: 5px;
-      padding: 25px;
-      transition: all 0.3s ease;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .lab-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 5px 15px rgba(0, 255, 65, 0.3);
-      border-color: var(--hacker-green);
-    }
-
-    .lab-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, rgba(0, 242, 255, 0.1), transparent);
-      z-index: -1;
-    }
-
-    .lab-icon {
-      font-size: 3rem;
-      margin-bottom: 15px;
-      color: var(--cyber-blue);
-    }
-
-    .lab-title {
-      font-family: 'Major Mono Display', monospace;
-      font-size: 1.5rem;
-      margin-bottom: 10px;
-      color: var(--hacker-green);
-    }
-
-    .lab-description {
-      font-size: 0.9rem;
-      color: var(--matrix-green);
-      margin-bottom: 20px;
-      min-height: 60px;
-    }
-
-    .lab-btn {
+    .attack-btn {
       background: transparent;
       border: 1px solid var(--cyber-blue);
       color: var(--cyber-blue);
-      padding: 10px 20px;
-      font-family: 'Share Tech Mono', monospace;
+      padding: 8px 12px;
       cursor: pointer;
+      font-family: 'Share Tech Mono', monospace;
       transition: all 0.3s;
-      width: 100%;
+      font-size: 14px;
     }
 
-    .lab-btn:hover {
+    .attack-btn:hover {
       background: rgba(0, 242, 255, 0.1);
-      border-color: var(--hacker-green);
-      color: var(--hacker-green);
     }
 
-    /* Footer */
-    .portal-footer {
-      margin-top: 40px;
-      font-size: 0.8rem;
-      color: var(--matrix-green);
-    }
-
-    /* Terminal Window Effect */
-    .terminal-effect {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--terminal-bg);
-      z-index: 100;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.5s;
-    }
-
-    .terminal-effect.active {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    .loading-text {
+    .execute-btn {
+      background: var(--hacker-green);
+      color: black;
+      border: none;
+      padding: 12px;
+      font-weight: bold;
+      cursor: pointer;
       font-family: 'Major Mono Display', monospace;
+      letter-spacing: 1px;
+      transition: all 0.3s;
+      font-size: 16px;
+      max-width: 200px;
+    }
+
+    .execute-btn:hover {
+      box-shadow: 0 0 10px var(--hacker-green);
+    }
+
+    /* === RESPONSE AREA === */
+    .response-area {
+      border: 1px solid var(--matrix-green);
+      padding: 15px;
+      margin-top: 20px;
+      min-height: 100px;
+      background: rgba(0, 0, 0, 0.2);
+      position: relative;
+    }
+
+    .response-title {
+      position: absolute;
+      top: -10px;
+      left: 10px;
+      background: var(--terminal-bg);
+      padding: 0 5px;
       color: var(--hacker-green);
-      font-size: 1.2rem;
+    }
+
+    /* === FOOTER === */
+    .terminal-footer {
+      text-align: center;
+      padding: 10px;
+      border-top: 1px solid var(--matrix-green);
+      font-size: 12px;
+      color: var(--matrix-green);
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    /* === ANIMATIONS === */
+    @keyframes breach {
+      0% { box-shadow: 0 0 5px var(--hacker-green); }
+      50% { box-shadow: 0 0 20px var(--warning-red); }
+      100% { box-shadow: 0 0 5px var(--hacker-green); }
+    }
+
+    .breach-effect {
+      animation: breach 0.5s 3;
     }
   </style>
 </head>
@@ -206,46 +227,53 @@
   <!-- Binary Rain Background -->
   <div class="binary-rain" id="binaryRain"></div>
   
-  <!-- Main Portal Content -->
-  <div class="portal-container">
-    <div class="portal-header">
-      <h1 class="portal-title">INJECTION LABS</h1>
-      <p class="portal-subtitle">CYBER SECURITY TRAINING PLATFORM</p>
-      <hr class="portal-divider">
+  <!-- Main terminal container -->
+  <div class="cyber-terminal">
+    <div class="terminal-header">
+      <h1 class="terminal-title">SQL_INJECTION_LAB.EXE</h1>
+      <div class="terminal-controls">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
     </div>
     
-    <div class="lab-cards">
-      <!-- SQL Injection Card -->
-      <div class="lab-card" id="sqlLab">
-        <div class="lab-icon">SQL</div>
-        <h2 class="lab-title">SQL INJECTION</h2>
-        <p class="lab-description">
-          Explore classic SQL injection techniques against a vulnerable login form.
-          Learn to bypass authentication and extract database information.
-        </p>
-        <button class="lab-btn">ENTER SQL LAB</button>
-      </div>
+    <div class="terminal-body" id="terminalOutput">
+      <div class="terminal-line">Initializing Cyber Security Lab...</div>
+      <div class="terminal-line">Loading SQL Injection Module...</div>
+      <div class="terminal-line">Establishing connection to test database...</div>
+      <div class="terminal-line" style="animation-delay: 0.3s">> Welcome to SQL Injection Lab</div>
+      <div class="terminal-line" style="animation-delay: 0.6s">> This is a safe environment to test SQL injection techniques</div>
+      <div class="terminal-line" style="animation-delay: 0.9s">> Try injecting malicious code in the login form below</div>
       
-      <!-- NoSQL Injection Card -->
-      <div class="lab-card" id="nosqlLab">
-        <div class="lab-icon">NoSQL</div>
-        <h2 class="lab-title">NoSQL INJECTION</h2>
-        <p class="lab-description">
-          Experiment with NoSQL injection attacks targeting MongoDB.
-          Discover how to manipulate JSON queries to bypass security.
-        </p>
-        <button class="lab-btn">ENTER NoSQL LAB</button>
+      <div class="injection-lab">
+        <h3>TEST LOGIN FORM</h3>
+        <div class="login-form">
+          <input type="text" id="username" class="form-input" placeholder="USERNAME">
+          <input type="password" id="password" class="form-input" placeholder="PASSWORD">
+          
+          <div class="attack-buttons">
+            <button class="attack-btn" id="basicBypassBtn">Basic Bypass</button>
+            <button class="attack-btn" id="alwaysTrueBtn">Always True</button>
+            <button class="attack-btn" id="commentAttackBtn">Comment Attack</button>
+            <button class="attack-btn" id="unionAttackBtn">Union Attack</button>
+            <button class="attack-btn" id="timeBasedBtn">Time-Based</button>
+            <button class="attack-btn" id="resetBtn">Reset Form</button>
+          </div>
+          
+          <button class="execute-btn" id="executeBtn">EXECUTE QUERY</button>
+        </div>
+        
+        <div class="response-area" id="responseArea">
+          <div class="response-title">DATABASE RESPONSE</div>
+          <div id="responseContent">Awaiting query execution...</div>
+        </div>
       </div>
     </div>
     
-    <div class="portal-footer">
+    <div class="terminal-footer">
       WARNING: FOR EDUCATIONAL PURPOSES ONLY | © 2025 CYBER SECURITY LAB
     </div>
-  </div>
-  
-  <!-- Terminal Loading Effect -->
-  <div class="terminal-effect" id="terminalEffect">
-    <p class="loading-text" id="loadingText">INITIALIZING LAB ENVIRONMENT...</p>
   </div>
 
   <script>
@@ -280,53 +308,136 @@
       }
     }
 
-    // Show loading screen and redirect
-    function loadLab(labType) {
-      const terminalEffect = document.getElementById('terminalEffect');
-      const loadingText = document.getElementById('loadingText');
+    // Load predefined attack
+    function loadAttack(attack, description) {
+      document.getElementById('username').value = attack;
+      document.getElementById('password').value = 'password';
+      addTerminalLine(`> Loaded attack pattern: ${description || attack}`);
+    }
+
+    // Execute the SQL query simulation
+    function executeQuery() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
       
-      // Show loading screen
-      terminalEffect.classList.add('active');
+      addTerminalLine(`> Executing: SELECT * FROM users WHERE username='${username}' AND password='${password}'`);
       
-      // Change loading text based on lab type
-      if (labType === 'sql') {
-        loadingText.textContent = "LOADING SQL INJECTION LAB...";
+      // Simulate different responses based on input
+      let response = "";
+      const responseArea = document.getElementById('responseContent');
+      const terminal = document.getElementById('terminalOutput');
+      
+      if (username.includes("' OR '1'='1") || username.includes("' --") || 
+          username.includes("1=1") || username.includes("UNION") ||
+          username.includes("SLEEP")) {
+        // Successful injection
+        response = `
+          <span style="color: var(--warning-red)">[!] SQL INJECTION DETECTED</span><br><br>
+          <span style="color: var(--hacker-green)">Query executed successfully!</span><br>
+          <span style="color: var(--cyber-blue)">Returned records:</span><br><br>
+          ID: 1 | Username: admin | Password: 5f4dcc3b5aa765d61d8327deb882cf99 (password)<br>
+          ID: 2 | Username: testuser | Password: 5f4dcc3b5aa765d61d8327deb882cf99 (password)<br>
+          ID: 3 | Username: guest | Password: 098f6bcd4621d373cade4e832627b4f6 (test)<br>
+          <br>
+          <span style="color: var(--cyber-blue)">Database schema exposed:</span><br>
+          Table: users (id, username, password, email, role)<br>
+          Table: products (id, name, price, description)
+        `;
+        
+        // Add breach effect
+        document.querySelector('.cyber-terminal').classList.add('breach-effect');
         setTimeout(() => {
-          window.location.href = "sql-lab.html";
-        }, 2000);
+          document.querySelector('.cyber-terminal').classList.remove('breach-effect');
+        }, 1500);
+        
+        addTerminalLine(`> <span style="color: var(--warning-red)">SECURITY BREACH!</span> Database records exposed`);
+      } else if (username === 'admin' && password === 'password') {
+        // Normal login
+        response = `
+          <span style="color: var(--hacker-green)">Login successful!</span><br>
+          Welcome back, admin. Your last login was 2025-05-10 14:30:22 UTC
+        `;
+        addTerminalLine(`> Authentication successful for user: admin`);
+      } else if (username === '' || password === '') {
+        // Empty fields
+        response = `
+          <span style="color: var(--warning-red)">Error:</span> Username and password cannot be empty
+        `;
+        addTerminalLine(`> Empty credentials provided`);
       } else {
-        loadingText.textContent = "LOADING NoSQL INJECTION LAB...";
-        setTimeout(() => {
-          window.location.href = "nosql-lab.html";
-        }, 2000);
+        // Failed login
+        response = `
+          <span style="color: var(--warning-red)">Login failed!</span><br>
+          Invalid username or password.
+        `;
+        addTerminalLine(`> Authentication failed for provided credentials`);
       }
+      
+      responseArea.innerHTML = response;
+      
+      // Auto-scroll terminal
+      terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    // Add line to terminal
+    function addTerminalLine(text) {
+      const terminal = document.getElementById('terminalOutput');
+      const line = document.createElement('div');
+      line.className = 'terminal-line';
+      line.innerHTML = `> ${text}`;
+      terminal.appendChild(line);
+      terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    // Reset form
+    function resetForm() {
+      document.getElementById('username').value = '';
+      document.getElementById('password').value = '';
+      document.getElementById('responseContent').innerHTML = 'Awaiting query execution...';
+      addTerminalLine('Form reset to default state');
     }
 
     // Initialize on load
     document.addEventListener('DOMContentLoaded', () => {
       createBinaryRain();
       
-      // Add click handlers to lab cards
-      document.getElementById('sqlLab').addEventListener('click', () => {
-        loadLab('sql');
+      // Button event listeners
+      document.getElementById('basicBypassBtn').addEventListener('click', () => {
+        loadAttack("1=1", "Basic Bypass (1=1)");
       });
       
-      document.getElementById('nosqlLab').addEventListener('click', () => {
-        loadLab('nosql');
+      document.getElementById('alwaysTrueBtn').addEventListener('click', () => {
+        loadAttack("' OR '1'='1", "Always True Condition");
       });
       
-      // Add click handlers to buttons (in case event doesn't bubble)
-      document.querySelectorAll('.lab-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const card = e.target.closest('.lab-card');
-          if (card.id === 'sqlLab') {
-            loadLab('sql');
-          } else {
-            loadLab('nosql');
-          }
-        });
+      document.getElementById('commentAttackBtn').addEventListener('click', () => {
+        loadAttack("admin' --", "Comment Attack (admin' --)");
       });
+      
+      document.getElementById('unionAttackBtn').addEventListener('click', () => {
+        loadAttack("' UNION SELECT 1,username,password FROM users--", "UNION Attack");
+      });
+      
+      document.getElementById('timeBasedBtn').addEventListener('click', () => {
+        loadAttack("' OR IF(1=1,SLEEP(5),0)--", "Time-Based Blind SQLi");
+      });
+      
+      document.getElementById('resetBtn').addEventListener('click', resetForm);
+      
+      document.getElementById('executeBtn').addEventListener('click', executeQuery);
+      
+      // Allow pressing Enter to execute query
+      document.getElementById('password').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          executeQuery();
+        }
+      });
+
+      // Add initial terminal lines with delay
+      setTimeout(() => {
+        addTerminalLine("System ready");
+        addTerminalLine("Type commands or test the login form below");
+      }, 1500);
     });
   </script>
 </body>
