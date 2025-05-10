@@ -201,8 +201,9 @@
           <input type="text" id="nosql-password" class="form-input" placeholder="PASSWORD (JSON format)">
           
           <div class="attack-buttons">
-            <button class="attack-btn" id="basicBypassBtn">Bypass Attack</button>
-            <button class="attack-btn" id="discoverUsersBtn">Discover other users</button>
+            <button class="attack-btn" id="basicBypassBtn">Bypass Atack</button>
+            <button class="attack-btn" id="discoverUsersBtn">Discover user2</button>
+            <button class="attack-btn" id="discoverUser3Btn">Discover user3</button>
             <button class="attack-btn" id="regexAttackBtn">Regex Attack</button>
             <button class="attack-btn" id="resetBtn">Reset</button>
           </div>
@@ -251,11 +252,11 @@
         password = passwordInput ? JSON.parse(passwordInput) : "";
       } catch (e) {
         document.getElementById('nosql-response').innerHTML = 
-          <span style="color: var(--warning-red)">Invalid JSON syntax</span>;
+          `<span style="color: var(--warning-red)">Invalid JSON syntax</span>`;
         return;
       }
       
-      addTerminalLine(> Executing: db.users.find({ username: ${JSON.stringify(username)}, password: ${JSON.stringify(password)} }));
+      addTerminalLine(`> Executing: db.users.find({ username: ${JSON.stringify(username)}, password: ${JSON.stringify(password)} })`);
       
       // Simulate MongoDB query
       let results = users.filter(user => {
@@ -289,7 +290,7 @@
       // Format response
       let response;
       if (results.length === 0) {
-        response = <span style="color: var(--warning-red)">Login failed - No matching users</span>;
+        response = `<span style="color: var(--warning-red)">Login failed - No matching users</span>`;
       } else if (results.length === 1) {
         const user = results[0];
         if (typeof username === 'string' && typeof password === 'string') {
@@ -313,7 +314,7 @@
         response = `
           <span style="color: var(--warning-red)">[!] NoSQL Injection Detected</span><br><br>
           <span style="color: var(--hacker-green)">Multiple users returned (${results.length})</span><br><br>
-          ${results.map(u => Username: ${u.username} | Password: ${u.password}).join('<br>')}
+          ${results.map(u => `Username: ${u.username} | Password: ${u.password}`).join('<br>')}
         `;
       }
       
