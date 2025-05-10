@@ -69,7 +69,7 @@
       font-family: 'Major Mono Display', monospace;
       font-size: 2.5rem;
       margin-bottom: 10px;
-      color: var(--hacker-green);
+      color: var(--cyber-blue);
     }
 
     .portal-subtitle {
@@ -109,7 +109,7 @@
     }
 
     .nosql-box {
-      border-color: var(--cyber-blue);
+      border-color: var(--hacker-green);
     }
 
     .nosql-box:hover {
@@ -142,7 +142,7 @@
     }
 
     .nosql-icon {
-      color: var(--cyber-blue);
+      color: var(--hacker-green);
     }
 
     .lab-title {
@@ -169,7 +169,7 @@
     }
 
     .sql-btn {
-      border-color: var(--hacker-green);
+      border-color: var(--cyber-blue);
     }
 
     .sql-btn:hover {
@@ -309,12 +309,12 @@
       if (labType === 'sql') {
         loadingText.textContent = "LOADING SQL INJECTION LAB...";
         setTimeout(() => {
-          window.location.href = "sql-lab.html";
+          window.location.href = "SQLi.html";
         }, 2000);
       } else {
         loadingText.textContent = "LOADING NoSQL INJECTION LAB...";
         setTimeout(() => {
-          window.location.href = "nosql-lab.html";
+          window.location.href = "NoSQLi.html";
         }, 2000);
       }
     }
