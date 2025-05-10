@@ -201,9 +201,9 @@
           <input type="text" id="nosql-password" class="form-input" placeholder="PASSWORD (JSON format)">
           
           <div class="attack-buttons">
-            <button class="attack-btn" id="basicBypassBtn">Bypass Attack</button>
-            <button class="attack-btn" id="discoverUsersBtn">Discover User2</button>
-            <button class="attack-btn" id="discoverUser3Btn">Discover User3</button>
+            <button class="attack-btn" id="basicBypassBtn">Bypass to user1</button>
+            <button class="attack-btn" id="discoverUsersBtn">Discover user2</button>
+            <button class="attack-btn" id="discoverUser3Btn">Discover user3</button>
             <button class="attack-btn" id="regexAttackBtn">Regex Attack</button>
             <button class="attack-btn" id="resetBtn">Reset</button>
           </div>
@@ -333,25 +333,25 @@
     document.getElementById('basicBypassBtn').addEventListener('click', () => {
       document.getElementById('nosql-username').value = JSON.stringify({$ne: "invalid"});
       document.getElementById('nosql-password').value = JSON.stringify({$ne: "invalid"});
-      addTerminalLine('> Loaded bypass attack pattern to login as user1');
+      addTerminalLine('> Loaded bypass to user1: {"$ne":"invalid"}');
     });
 
     document.getElementById('discoverUsersBtn').addEventListener('click', () => {
       document.getElementById('nosql-username').value = JSON.stringify({$nin: ["user1"]});
       document.getElementById('nosql-password').value = JSON.stringify({$ne: "invalid"});
-      addTerminalLine('> Loaded discover user2 pattern');
+      addTerminalLine('> Loaded discover user2: {"$nin":["user1"]}');
     });
 
     document.getElementById('discoverUser3Btn').addEventListener('click', () => {
       document.getElementById('nosql-username').value = JSON.stringify({$nin: ["user1", "user2"]});
       document.getElementById('nosql-password').value = JSON.stringify({$ne: "invalid"});
-      addTerminalLine('> Loaded discover user3 pattern');
+      addTerminalLine('> Loaded discover user3: {"$nin":["user1","user2"]}');
     });
 
     document.getElementById('regexAttackBtn').addEventListener('click', () => {
-      document.getElementById('nosql-username').value = '"user2"';
-      document.getElementById('nosql-password').value = JSON.stringify({$regex: "^d"});
-      addTerminalLine('> Loaded regex attack for user2 (password starts with "d")');
+      document.getElementById('nosql-username').value = '"user1"';
+      document.getElementById('nosql-password').value = JSON.stringify({$regex: "^a"});
+      addTerminalLine('> Loaded regex attack: {"$regex":"^a"}');
     });
 
     document.getElementById('resetBtn').addEventListener('click', () => {
