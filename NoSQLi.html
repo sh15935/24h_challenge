@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CYBER SECURITY LAB - NoSQL Injection</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NoSQL Injection Lab</title>
   <link href="https://fonts.googleapis.com/css2?family=Major+Mono+Display&family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -29,30 +29,6 @@
       align-items: center;
     }
 
-    /* === BINARY RAIN BACKGROUND === */
-    .binary-rain {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      overflow: hidden;
-    }
-
-    .binary-digit {
-      position: absolute;
-      color: rgba(0, 255, 65, 0.3);
-      font-size: 16px;
-      animation: fall linear infinite;
-      font-family: 'Share Tech Mono', monospace;
-    }
-
-    @keyframes fall {
-      to { transform: translateY(100vh); }
-    }
-
-    /* === TERMINAL STYLES === */
     .cyber-terminal {
       width: 90%;
       max-width: 800px;
@@ -84,18 +60,6 @@
       font-size: 1.2rem;
     }
 
-    .terminal-controls span {
-      display: inline-block;
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      margin-left: 5px;
-    }
-
-    .terminal-controls span:nth-child(1) { background: #ff5f56; }
-    .terminal-controls span:nth-child(2) { background: #ffbd2e; }
-    .terminal-controls span:nth-child(3) { background: #27c93f; }
-
     .terminal-body {
       padding: 20px;
       flex-grow: 1;
@@ -114,7 +78,6 @@
       to { opacity: 1; }
     }
 
-    /* === FORM === */
     .injection-lab {
       margin-top: 20px;
       padding-top: 20px;
@@ -220,39 +183,34 @@
   </style>
 </head>
 <body>
-  <!-- Binary rain background -->
-  <div class="binary-rain" id="binaryRain"></div>
-  
-  <!-- Cyber Terminal -->
   <div class="cyber-terminal">
     <div class="terminal-header">
-      <h1 class="terminal-title">NOSQL_INJECTION_LAB.exe</h1>
-      <div class="terminal-controls">
-        <span></span><span></span><span></span>
-      </div>
+      <h1 class="terminal-title">NOSQL_INJECTION_LAB.EXE</h1>
     </div>
     <div class="terminal-body" id="terminalOutput">
-      <div class="terminal-line">Initializing Cyber Security Lab...</div>
-      <div class="terminal-line">Loading NoSQL Injection Module...</div>
-      <div class="terminal-line">Connecting to MongoDB simulation...</div>
-      <div class="terminal-line">> Welcome to NoSQL Injection Lab</div>
-      <div class="terminal-line">> Try injecting JavaScript-like objects in the login form below</div>
+      <div class="terminal-line">Initializing NoSQL Injection Lab...</div>
+      <div class="terminal-line">Connected to MongoDB v6.0</div>
+      <div class="terminal-line">> Database: users_db</div>
+      <div class="terminal-line">> Collection: users</div>
+      <div class="terminal-line">> Documents: 3</div>
+      
       <div class="injection-lab">
         <h3>TEST LOGIN FORM</h3>
         <div class="login-form">
-          <input type="text" id="nosql-username" class="form-input" placeholder="USERNAME">
-          <input type="text" id="nosql-password" class="form-input" placeholder="PASSWORD">
+          <input type="text" id="nosql-username" class="form-input" placeholder="USERNAME (JSON format)">
+          <input type="text" id="nosql-password" class="form-input" placeholder="PASSWORD (JSON format)">
+          
           <div class="attack-buttons">
-            <button class="attack-btn" id="bypassBtn">Bypass Attack</button>
-            <button class="attack-btn" id="trueBtn">Always True</button>
-            <button class="attack-btn" id="regexBtn">Regex Attack</button>
-            <button class="attack-btn" id="jsInjectionBtn">JS Injection</button>
-            <button class="attack-btn" id="nullAttackBtn">Null Attack</button>
-            <button class="attack-btn" id="adminBtn">Admin Creds</button>
-            <button class="attack-btn" id="resetBtn">Reset Form</button>
+            <button class="attack-btn" id="basicBypassBtn">Basic Bypass</button>
+            <button class="attack-btn" id="discoverUsersBtn">Discover Users</button>
+            <button class="attack-btn" id="regexAttackBtn">Regex Attack</button>
+            <button class="attack-btn" id="legitLoginBtn">Legit Login</button>
+            <button class="attack-btn" id="resetBtn">Reset</button>
           </div>
+          
           <button class="execute-btn" id="executeBtn">EXECUTE QUERY</button>
         </div>
+        
         <div class="response-area">
           <div class="response-title">SERVER RESPONSE</div>
           <div id="nosql-response">Awaiting query execution...</div>
@@ -265,60 +223,12 @@
   </div>
 
   <script>
-    // Binary rain effect
-    function createBinaryRain() {
-      const container = document.getElementById('binaryRain');
-      const digits = '01';
-      const columns = Math.floor(window.innerWidth / 15);
-      
-      for (let i = 0; i < columns; i++) {
-        const digit = document.createElement('div');
-        digit.className = 'binary-digit';
-        digit.textContent = digits.charAt(Math.floor(Math.random() * digits.length));
-        digit.style.left = `${(i * 15) + Math.random() * 10}px`;
-        digit.style.animationDuration = `${5 + Math.random() * 10}s`;
-        digit.style.animationDelay = `${Math.random() * 5}s`;
-        container.appendChild(digit);
-      }
-    }
-
-    // Attack loaders
-    function loadNoSQLAttack(attack, description) {
-      document.getElementById('nosql-username').value = attack;
-      document.getElementById('nosql-password').value = 'any';
-      addTerminalLine(`> Loaded attack pattern: ${description || attack}`);
-    }
-
-    // Query simulator
-    function simulateNoSQLQuery() {
-      const user = document.getElementById('nosql-username').value;
-      const pass = document.getElementById('nosql-password').value;
-      addTerminalLine(`> Executing: db.users.find({ username: ${user}, password: "${pass}" })`);
-
-      let result = '';
-      if (user.includes('$ne') || user.includes('$or') || 
-          user.includes('$regex') || user.includes('$where') || 
-          user.includes('$gt') || user === 'admin') {
-        result = `
-          <span style="color: var(--warning-red)">[!] NoSQL INJECTION DETECTED</span><br><br>
-          <span style="color: var(--hacker-green)">Bypassed authentication!</span><br>
-          <span style="color: var(--cyber-blue)">Returned documents:</span><br><br>
-          { "_id": 1, "username": "admin", "password": "hashed_admin", "role": "superuser", "email": "admin@cybersec.lab" }<br>
-          { "_id": 2, "username": "guest", "password": "hashed_guest", "role": "user", "email": "guest@cybersec.lab" }<br>
-          { "_id": 3, "username": "service", "password": "hashed_service", "role": "service", "email": "service@cybersec.lab" }
-        `;
-        document.querySelector('.cyber-terminal').classList.add('breach-effect');
-        setTimeout(() => {
-          document.querySelector('.cyber-terminal').classList.remove('breach-effect');
-        }, 1500);
-      } else if (user === '' || pass === '') {
-        result = "<span style='color: var(--warning-red)'>Error: Empty username or password</span>";
-      } else {
-        result = "<span style='color: var(--matrix-green)'>No documents found. Access denied.</span>";
-      }
-
-      document.getElementById('nosql-response').innerHTML = result;
-    }
+    // Database simulation
+    const users = [
+      { username: "user1", password: "abc123", email: "user1@example.com", role: "user" },
+      { username: "user2", password: "def456", email: "user2@example.com", role: "admin" },
+      { username: "user3", password: "ghi789", email: "user3@example.com", role: "user" }
+    ];
 
     // Add line to terminal
     function addTerminalLine(text) {
@@ -330,54 +240,121 @@
       terminal.scrollTop = terminal.scrollHeight;
     }
 
-    // Reset form
-    function resetForm() {
+    // Execute query simulation
+    function executeQuery() {
+      const usernameInput = document.getElementById('nosql-username').value;
+      const passwordInput = document.getElementById('nosql-password').value;
+      
+      let username, password;
+      
+      try {
+        username = usernameInput ? JSON.parse(usernameInput) : "";
+        password = passwordInput ? JSON.parse(passwordInput) : "";
+      } catch (e) {
+        document.getElementById('nosql-response').innerHTML = 
+          `<span style="color: var(--warning-red)">Invalid JSON syntax</span>`;
+        return;
+      }
+      
+      addTerminalLine(`> Executing: db.users.find({ username: ${JSON.stringify(username)}, password: ${JSON.stringify(password)} })`);
+      
+      // Simulate MongoDB query
+      let results = users.filter(user => {
+        // Handle $ne operator
+        if (typeof username === 'object' && username.$ne) {
+          return user.username !== username.$ne;
+        }
+        if (typeof password === 'object' && password.$ne) {
+          return user.password !== password.$ne;
+        }
+        
+        // Handle $nin operator
+        if (typeof username === 'object' && username.$nin) {
+          return !username.$nin.includes(user.username);
+        }
+        
+        // Handle $regex operator
+        if (typeof password === 'object' && password.$regex) {
+          const regex = new RegExp(password.$regex);
+          return regex.test(user.password);
+        }
+        
+        // Standard comparison
+        return (username === "" || user.username === username) && 
+               (password === "" || user.password === password);
+      });
+      
+      // Format response
+      let response;
+      if (results.length === 0) {
+        response = `<span style="color: var(--warning-red)">Login failed - No matching users</span>`;
+      } else if (results.length === 1) {
+        const user = results[0];
+        response = `
+          <span style="color: var(--hacker-green)">Login successful as ${user.username}</span><br><br>
+          <span style="color: var(--cyber-blue)">User details:</span><br>
+          Username: ${user.username}<br>
+          Email: ${user.email}<br>
+          Role: ${user.role}
+        `;
+      } else {
+        response = `
+          <span style="color: var(--warning-red)">[!] NoSQL Injection Detected</span><br><br>
+          <span style="color: var(--hacker-green)">Multiple users returned (${results.length})</span><br><br>
+          ${results.map(u => `Username: ${u.username} | Password: ${u.password}`).join('<br>')}
+        `;
+      }
+      
+      document.getElementById('nosql-response').innerHTML = response;
+      
+      // Add breach effect if injection detected
+      if (results.length > 1) {
+        document.querySelector('.cyber-terminal').classList.add('breach-effect');
+        setTimeout(() => {
+          document.querySelector('.cyber-terminal').classList.remove('breach-effect');
+        }, 1500);
+      }
+    }
+
+    // Attack patterns
+    document.getElementById('basicBypassBtn').addEventListener('click', () => {
+      document.getElementById('nosql-username').value = JSON.stringify({$ne: "invalid"});
+      document.getElementById('nosql-password').value = JSON.stringify({$ne: "invalid"});
+      addTerminalLine('> Loaded Basic Bypass: {"$ne":"invalid"}');
+    });
+
+    document.getElementById('discoverUsersBtn').addEventListener('click', () => {
+      document.getElementById('nosql-username').value = JSON.stringify({$nin: ["user1"]});
+      document.getElementById('nosql-password').value = JSON.stringify({$ne: "invalid"});
+      addTerminalLine('> Loaded User Discovery: {"$nin":["user1"]}');
+    });
+
+    document.getElementById('regexAttackBtn').addEventListener('click', () => {
+      document.getElementById('nosql-username').value = '"user1"';
+      document.getElementById('nosql-password').value = JSON.stringify({$regex: "^a"});
+      addTerminalLine('> Loaded Regex Attack: {"$regex":"^a"}');
+    });
+
+    document.getElementById('legitLoginBtn').addEventListener('click', () => {
+      document.getElementById('nosql-username').value = '"user1"';
+      document.getElementById('nosql-password').value = '"abc123"';
+      addTerminalLine('> Loaded legitimate credentials for user1');
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
       document.getElementById('nosql-username').value = '';
       document.getElementById('nosql-password').value = '';
       document.getElementById('nosql-response').innerHTML = 'Awaiting query execution...';
-      addTerminalLine('> Form reset to default state');
-    }
+      addTerminalLine('> Form reset');
+    });
 
-    // Button event bindings
-    document.addEventListener('DOMContentLoaded', () => {
-      createBinaryRain();
-      
-      document.getElementById('bypassBtn').addEventListener('click', () => {
-        loadNoSQLAttack('{ "username": { "$ne": null } }', 'Bypass Attack (Non-Equal Comparison)');
-      });
+    document.getElementById('executeBtn').addEventListener('click', executeQuery);
 
-      document.getElementById('trueBtn').addEventListener('click', () => {
-        loadNoSQLAttack('{ "$or": [ {}, { "a": "a" } ] }', 'Always True (OR Condition)');
-      });
-
-      document.getElementById('regexBtn').addEventListener('click', () => {
-        loadNoSQLAttack('{ "username": { "$regex": "^a" } }', 'Regex Attack (Pattern Matching)');
-      });
-
-      document.getElementById('jsInjectionBtn').addEventListener('click', () => {
-        loadNoSQLAttack('{ "$where": "this.username == \'admin\'" }', 'JavaScript Injection ($where clause)');
-      });
-
-      document.getElementById('nullAttackBtn').addEventListener('click', () => {
-        loadNoSQLAttack('{ "username": { "$gt": "" } }', 'Greater Than Attack (Empty String Comparison)');
-      });
-
-      document.getElementById('adminBtn').addEventListener('click', () => {
-        document.getElementById('nosql-username').value = 'admin';
-        document.getElementById('nosql-password').value = 'secret';
-        addTerminalLine('> Loaded admin credentials (legitimate login attempt)');
-      });
-
-      document.getElementById('resetBtn').addEventListener('click', resetForm);
-
-      document.getElementById('executeBtn').addEventListener('click', simulateNoSQLQuery);
-
-      // Allow pressing Enter to execute query
-      document.getElementById('nosql-password').addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-          simulateNoSQLQuery();
-        }
-      });
+    // Allow pressing Enter to execute query
+    document.getElementById('nosql-password').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        executeQuery();
+      }
     });
   </script>
 </body>
