@@ -24,6 +24,9 @@
       overflow: hidden;
       background-color: var(--darker-bg);
       color: var(--hacker-green);
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     /* Binary Rain Background */
@@ -50,125 +53,142 @@
     }
 
     /* Main Container */
-    .split-screen {
-      display: flex;
-      height: 100vh;
-    }
-
-    /* Left Side - SQL */
-    .sql-section {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background: rgba(10, 10, 18, 0.7);
-      border-right: 1px solid var(--matrix-green);
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-
-    .sql-section:hover {
-      background: rgba(0, 68, 17, 0.2);
-      border-right: 1px solid var(--hacker-green);
-    }
-
-    /* Right Side - NoSQL */
-    .nosql-section {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background: rgba(10, 10, 18, 0.7);
-      border-left: 1px solid var(--matrix-green);
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-
-    .nosql-section:hover {
-      background: rgba(0, 68, 102, 0.2);
-      border-left: 1px solid var(--cyber-blue);
-    }
-
-    /* Common Section Styles */
-    .section-content {
+    .portal-container {
+      width: 90%;
+      max-width: 900px;
       text-align: center;
-      padding: 20px;
-      max-width: 80%;
     }
 
-    .lab-icon {
+    /* Header */
+    .portal-header {
+      margin-bottom: 40px;
+      text-shadow: 0 0 10px var(--hacker-green);
+    }
+
+    .portal-title {
       font-family: 'Major Mono Display', monospace;
-      font-size: 3rem;
-      margin-bottom: 20px;
-      text-shadow: 0 0 10px currentColor;
-    }
-
-    .sql-section .lab-icon {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
       color: var(--hacker-green);
     }
 
-    .nosql-section .lab-icon {
+    .portal-subtitle {
+      font-size: 1rem;
+      color: var(--matrix-green);
+      margin-bottom: 20px;
+    }
+
+    /* Box Container */
+    .box-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 0 auto;
+    }
+
+    /* Lab Boxes */
+    .lab-box {
+      width: 350px;
+      background: var(--terminal-bg);
+      border: 1px solid;
+      border-radius: 5px;
+      padding: 30px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sql-box {
+      border-color: var(--hacker-green);
+    }
+
+    .sql-box:hover {
+      box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+      transform: translateY(-5px);
+    }
+
+    .nosql-box {
+      border-color: var(--cyber-blue);
+    }
+
+    .nosql-box:hover {
+      box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
+      transform: translateY(-5px);
+    }
+
+    .lab-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(0, 242, 255, 0.05), transparent);
+      z-index: -1;
+    }
+
+    .sql-box::before {
+      background: linear-gradient(135deg, rgba(0, 255, 65, 0.05), transparent);
+    }
+
+    .lab-icon {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+
+    .sql-icon {
+      color: var(--hacker-green);
+    }
+
+    .nosql-icon {
       color: var(--cyber-blue);
     }
 
     .lab-title {
       font-family: 'Major Mono Display', monospace;
-      font-size: 2rem;
+      font-size: 1.8rem;
       margin-bottom: 15px;
     }
 
     .lab-description {
       font-size: 0.9rem;
       color: var(--matrix-green);
-      margin-bottom: 30px;
+      margin-bottom: 25px;
       line-height: 1.5;
     }
 
     .lab-btn {
       background: transparent;
       border: 1px solid;
-      padding: 12px 30px;
+      color: inherit;
+      padding: 10px 25px;
       font-family: 'Share Tech Mono', monospace;
-      font-size: 1rem;
       cursor: pointer;
       transition: all 0.3s;
     }
 
-    .sql-section .lab-btn {
-      color: var(--hacker-green);
+    .sql-btn {
       border-color: var(--hacker-green);
     }
 
-    .sql-section .lab-btn:hover {
+    .sql-btn:hover {
       background: rgba(0, 255, 65, 0.1);
-      box-shadow: 0 0 15px var(--hacker-green);
     }
 
-    .nosql-section .lab-btn {
-      color: var(--cyber-blue);
+    .nosql-btn {
       border-color: var(--cyber-blue);
     }
 
-    .nosql-section .lab-btn:hover {
+    .nosql-btn:hover {
       background: rgba(0, 242, 255, 0.1);
-      box-shadow: 0 0 15px var(--cyber-blue);
     }
 
-    /* Center Divider */
-    .center-title {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-family: 'Major Mono Display', monospace;
-      font-size: 1.5rem;
+    /* Footer */
+    .portal-footer {
+      margin-top: 40px;
+      font-size: 0.8rem;
       color: var(--matrix-green);
-      background: var(--darker-bg);
-      padding: 0 15px;
-      z-index: 2;
-      pointer-events: none;
     }
 
     /* Terminal Loading Effect */
@@ -198,60 +218,46 @@
       color: var(--hacker-green);
       font-size: 1.2rem;
     }
-
-    /* Footer */
-    .portal-footer {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      text-align: center;
-      padding: 10px;
-      font-size: 0.7rem;
-      color: var(--matrix-green);
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 1;
-    }
   </style>
 </head>
 <body>
   <!-- Binary Rain Background -->
   <div class="binary-rain" id="binaryRain"></div>
   
-  <!-- Split Screen Container -->
-  <div class="split-screen">
-    <!-- Left Side - SQL Injection -->
-    <div class="sql-section" id="sqlLab">
-      <div class="section-content">
-        <div class="lab-icon">SQL</div>
+  <!-- Main Portal Content -->
+  <div class="portal-container">
+    <div class="portal-header">
+      <h1 class="portal-title">INJECTION LABS</h1>
+      <p class="portal-subtitle">CYBER SECURITY TRAINING PLATFORM</p>
+    </div>
+    
+    <div class="box-container">
+      <!-- Left Box - SQL Injection -->
+      <div class="lab-box sql-box" id="sqlLab">
+        <div class="lab-icon sql-icon">SQL</div>
         <h2 class="lab-title">SQL INJECTION</h2>
         <p class="lab-description">
           Explore classic SQL injection techniques against a vulnerable login form.
           Learn to bypass authentication and extract database information.
         </p>
-        <button class="lab-btn">ENTER LAB</button>
+        <button class="lab-btn sql-btn">ENTER SQL LAB</button>
       </div>
-    </div>
-    
-    <!-- Right Side - NoSQL Injection -->
-    <div class="nosql-section" id="nosqlLab">
-      <div class="section-content">
-        <div class="lab-icon">NoSQL</div>
+      
+      <!-- Right Box - NoSQL Injection -->
+      <div class="lab-box nosql-box" id="nosqlLab">
+        <div class="lab-icon nosql-icon">NoSQL</div>
         <h2 class="lab-title">NoSQL INJECTION</h2>
         <p class="lab-description">
           Experiment with NoSQL injection attacks targeting MongoDB.
           Discover how to manipulate JSON queries to bypass security.
         </p>
-        <button class="lab-btn">ENTER LAB</button>
+        <button class="lab-btn nosql-btn">ENTER NoSQL LAB</button>
       </div>
     </div>
     
-    <!-- Center Title -->
-    <div class="center-title">INJECTION LABS</div>
-  </div>
-  
-  <!-- Footer -->
-  <div class="portal-footer">
-    WARNING: FOR EDUCATIONAL PURPOSES ONLY | © 2025 CYBER SECURITY LAB
+    <div class="portal-footer">
+      WARNING: FOR EDUCATIONAL PURPOSES ONLY | © 2025 CYBER SECURITY LAB
+    </div>
   </div>
   
   <!-- Terminal Loading Effect -->
@@ -317,7 +323,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       createBinaryRain();
       
-      // Add click handlers to sections
+      // Add click handlers to lab boxes
       document.getElementById('sqlLab').addEventListener('click', () => {
         loadLab('sql');
       });
@@ -330,8 +336,8 @@
       document.querySelectorAll('.lab-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
-          const section = e.target.closest('.sql-section') ? 'sql' : 'nosql';
-          loadLab(section);
+          const box = e.target.closest('.sql-box') ? 'sql' : 'nosql';
+          loadLab(box);
         });
       });
     });
