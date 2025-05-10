@@ -253,12 +253,15 @@
           <input type="password" id="password" class="form-input" placeholder="PASSWORD">
           
           <div class="attack-buttons">
-            <button class="attack-btn" onclick="loadAttack('1=1')">Basic Bypass</button>
-            <button class="attack-btn" onclick="loadAttack('\' OR \'1\'=\'1')">Always True</button>
-            <button class="attack-btn" onclick="loadAttack('admin\' --')">Comment Attack</button>
+            <button class="attack-btn" id="basicBypassBtn">Basic Bypass</button>
+            <button class="attack-btn" id="alwaysTrueBtn">Always True</button>
+            <button class="attack-btn" id="commentAttackBtn">Comment Attack</button>
+            <button class="attack-btn" id="unionAttackBtn">Union Attack</button>
+            <button class="attack-btn" id="timeBasedBtn">Time-Based</button>
+            <button class="attack-btn" id="resetBtn">Reset Form</button>
           </div>
           
-          <button class="execute-btn" onclick="executeQuery()">EXECUTE QUERY</button>
+          <button class="execute-btn" id="executeBtn">EXECUTE QUERY</button>
         </div>
         
         <div class="response-area" id="responseArea">
@@ -291,9 +294,9 @@
         const delay = Math.random() * 5;
         const opacity = 0.1 + Math.random() * 0.3;
         
-        digit.style.left = ${left}%;
-        digit.style.animationDuration = ${animationDuration}s;
-        digit.style.animationDelay = ${delay}s;
+        digit.style.left = `${left}%`;
+        digit.style.animationDuration = `${animationDuration}s`;
+        digit.style.animationDelay = `${delay}s`;
         digit.style.opacity = opacity;
         
         // Change digits periodically
@@ -306,10 +309,10 @@
     }
 
     // Load predefined attack
-    function loadAttack(attack) {
+    function loadAttack(attack, description) {
       document.getElementById('username').value = attack;
       document.getElementById('password').value = 'password';
-      addTerminalLine(> Loaded attack pattern: ${attack});
+      addTerminalLine(`> Loaded attack pattern: ${description || attack}`);
     }
 
     // Execute the SQL query simulation
@@ -317,22 +320,28 @@
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
       
-      addTerminalLine(> Executing: SELECT * FROM users WHERE username='${username}' AND password='${password}');
+      addTerminalLine(`> Executing: SELECT * FROM users WHERE username='${username}' AND password='${password}'`);
       
       // Simulate different responses based on input
       let response = "";
       const responseArea = document.getElementById('responseContent');
       const terminal = document.getElementById('terminalOutput');
       
-      if (username.includes("' OR '1'='1") || username.includes("' --") || username.includes("1=1")) {
+      if (username.includes("' OR '1'='1") || username.includes("' --") || 
+          username.includes("1=1") || username.includes("UNION") ||
+          username.includes("SLEEP")) {
         // Successful injection
         response = `
           <span style="color: var(--warning-red)">[!] SQL INJECTION DETECTED</span><br><br>
           <span style="color: var(--hacker-green)">Query executed successfully!</span><br>
-          <span style="color: var(--cyber-blue)">Returned all user records:</span><br><br>
-          ID: 1 | Username: souma | Password: 1234567<br>
-          ID: 2 | Username: kanchii | Password: 20032004<br>
-          ID: 3 | Username: youn | Password: password<br>
+          <span style="color: var(--cyber-blue)">Returned records:</span><br><br>
+          ID: 1 | Username: admin | Password: 5f4dcc3b5aa765d61d8327deb882cf99 (password)<br>
+          ID: 2 | Username: testuser | Password: 5f4dcc3b5aa765d61d8327deb882cf99 (password)<br>
+          ID: 3 | Username: guest | Password: 098f6bcd4621d373cade4e832627b4f6 (test)<br>
+          <br>
+          <span style="color: var(--cyber-blue)">Database schema exposed:</span><br>
+          Table: users (id, username, password, email, role)<br>
+          Table: products (id, name, price, description)
         `;
         
         // Add breach effect
@@ -341,21 +350,27 @@
           document.querySelector('.cyber-terminal').classList.remove('breach-effect');
         }, 1500);
         
-        addTerminalLine(> <span style="color: var(--warning-red)">SECURITY BREACH!</span> Database records exposed);
+        addTerminalLine(`> <span style="color: var(--warning-red)">SECURITY BREACH!</span> Database records exposed`);
       } else if (username === 'admin' && password === 'password') {
         // Normal login
         response = `
           <span style="color: var(--hacker-green)">Login successful!</span><br>
-          Welcome back, admin.
+          Welcome back, admin. Your last login was 2025-05-10 14:30:22 UTC
         `;
-        addTerminalLine(> Authentication successful for user: admin);
+        addTerminalLine(`> Authentication successful for user: admin`);
+      } else if (username === '' || password === '') {
+        // Empty fields
+        response = `
+          <span style="color: var(--warning-red)">Error:</span> Username and password cannot be empty
+        `;
+        addTerminalLine(`> Empty credentials provided`);
       } else {
         // Failed login
         response = `
           <span style="color: var(--warning-red)">Login failed!</span><br>
           Invalid username or password.
         `;
-        addTerminalLine(> Authentication failed for provided credentials);
+        addTerminalLine(`> Authentication failed for provided credentials`);
       }
       
       responseArea.innerHTML = response;
@@ -369,14 +384,55 @@
       const terminal = document.getElementById('terminalOutput');
       const line = document.createElement('div');
       line.className = 'terminal-line';
-      line.innerHTML = > ${text};
+      line.innerHTML = `> ${text}`;
       terminal.appendChild(line);
+      terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    // Reset form
+    function resetForm() {
+      document.getElementById('username').value = '';
+      document.getElementById('password').value = '';
+      document.getElementById('responseContent').innerHTML = 'Awaiting query execution...';
+      addTerminalLine('Form reset to default state');
     }
 
     // Initialize on load
-    window.addEventListener('load', () => {
+    document.addEventListener('DOMContentLoaded', () => {
       createBinaryRain();
       
+      // Button event listeners
+      document.getElementById('basicBypassBtn').addEventListener('click', () => {
+        loadAttack("1=1", "Basic Bypass (1=1)");
+      });
+      
+      document.getElementById('alwaysTrueBtn').addEventListener('click', () => {
+        loadAttack("' OR '1'='1", "Always True Condition");
+      });
+      
+      document.getElementById('commentAttackBtn').addEventListener('click', () => {
+        loadAttack("admin' --", "Comment Attack (admin' --)");
+      });
+      
+      document.getElementById('unionAttackBtn').addEventListener('click', () => {
+        loadAttack("' UNION SELECT 1,username,password FROM users--", "UNION Attack");
+      });
+      
+      document.getElementById('timeBasedBtn').addEventListener('click', () => {
+        loadAttack("' OR IF(1=1,SLEEP(5),0)--", "Time-Based Blind SQLi");
+      });
+      
+      document.getElementById('resetBtn').addEventListener('click', resetForm);
+      
+      document.getElementById('executeBtn').addEventListener('click', executeQuery);
+      
+      // Allow pressing Enter to execute query
+      document.getElementById('password').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          executeQuery();
+        }
+      });
+
       // Add initial terminal lines with delay
       setTimeout(() => {
         addTerminalLine("System ready");
