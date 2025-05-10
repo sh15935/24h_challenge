@@ -24,9 +24,6 @@
       overflow: hidden;
       background-color: var(--darker-bg);
       color: var(--hacker-green);
-      display: flex;
-      justify-content: center;
-      align-items: center;
     }
 
     /* Binary Rain Background */
@@ -53,127 +50,128 @@
     }
 
     /* Main Container */
-    .portal-container {
-      width: 90%;
-      max-width: 800px;
-      text-align: center;
-      animation: fadeIn 1.5s ease-in;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    /* Header */
-    .portal-header {
-      margin-bottom: 40px;
-      text-shadow: 0 0 10px var(--hacker-green);
-    }
-
-    .portal-title {
-      font-family: 'Major Mono Display', monospace;
-      font-size: 2.5rem;
-      margin-bottom: 10px;
-      color: var(--hacker-green);
-    }
-
-    .portal-subtitle {
-      font-size: 1rem;
-      color: var(--matrix-green);
-      margin-bottom: 20px;
-    }
-
-    .portal-divider {
-      width: 50%;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--hacker-green), transparent);
-      margin: 20px auto;
-      border: none;
-    }
-
-    /* Lab Cards */
-    .lab-cards {
+    .split-screen {
       display: flex;
-      justify-content: center;
-      gap: 30px;
-      flex-wrap: wrap;
+      height: 100vh;
     }
 
-    .lab-card {
-      width: 300px;
-      background: var(--terminal-bg);
-      border: 1px solid var(--matrix-green);
-      border-radius: 5px;
-      padding: 25px;
+    /* Left Side - SQL */
+    .sql-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: rgba(10, 10, 18, 0.7);
+      border-right: 1px solid var(--matrix-green);
       transition: all 0.3s ease;
       cursor: pointer;
-      position: relative;
-      overflow: hidden;
     }
 
-    .lab-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 5px 15px rgba(0, 255, 65, 0.3);
-      border-color: var(--hacker-green);
+    .sql-section:hover {
+      background: rgba(0, 68, 17, 0.2);
+      border-right: 1px solid var(--hacker-green);
     }
 
-    .lab-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, rgba(0, 242, 255, 0.1), transparent);
-      z-index: -1;
+    /* Right Side - NoSQL */
+    .nosql-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: rgba(10, 10, 18, 0.7);
+      border-left: 1px solid var(--matrix-green);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nosql-section:hover {
+      background: rgba(0, 68, 102, 0.2);
+      border-left: 1px solid var(--cyber-blue);
+    }
+
+    /* Common Section Styles */
+    .section-content {
+      text-align: center;
+      padding: 20px;
+      max-width: 80%;
     }
 
     .lab-icon {
+      font-family: 'Major Mono Display', monospace;
       font-size: 3rem;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px currentColor;
+    }
+
+    .sql-section .lab-icon {
+      color: var(--hacker-green);
+    }
+
+    .nosql-section .lab-icon {
       color: var(--cyber-blue);
     }
 
     .lab-title {
       font-family: 'Major Mono Display', monospace;
-      font-size: 1.5rem;
-      margin-bottom: 10px;
-      color: var(--hacker-green);
+      font-size: 2rem;
+      margin-bottom: 15px;
     }
 
     .lab-description {
       font-size: 0.9rem;
       color: var(--matrix-green);
-      margin-bottom: 20px;
-      min-height: 60px;
+      margin-bottom: 30px;
+      line-height: 1.5;
     }
 
     .lab-btn {
       background: transparent;
-      border: 1px solid var(--cyber-blue);
-      color: var(--cyber-blue);
-      padding: 10px 20px;
+      border: 1px solid;
+      padding: 12px 30px;
       font-family: 'Share Tech Mono', monospace;
+      font-size: 1rem;
       cursor: pointer;
       transition: all 0.3s;
-      width: 100%;
     }
 
-    .lab-btn:hover {
-      background: rgba(0, 242, 255, 0.1);
-      border-color: var(--hacker-green);
+    .sql-section .lab-btn {
       color: var(--hacker-green);
+      border-color: var(--hacker-green);
     }
 
-    /* Footer */
-    .portal-footer {
-      margin-top: 40px;
-      font-size: 0.8rem;
+    .sql-section .lab-btn:hover {
+      background: rgba(0, 255, 65, 0.1);
+      box-shadow: 0 0 15px var(--hacker-green);
+    }
+
+    .nosql-section .lab-btn {
+      color: var(--cyber-blue);
+      border-color: var(--cyber-blue);
+    }
+
+    .nosql-section .lab-btn:hover {
+      background: rgba(0, 242, 255, 0.1);
+      box-shadow: 0 0 15px var(--cyber-blue);
+    }
+
+    /* Center Divider */
+    .center-title {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Major Mono Display', monospace;
+      font-size: 1.5rem;
       color: var(--matrix-green);
+      background: var(--darker-bg);
+      padding: 0 15px;
+      z-index: 2;
+      pointer-events: none;
     }
 
-    /* Terminal Window Effect */
+    /* Terminal Loading Effect */
     .terminal-effect {
       position: fixed;
       top: 0;
@@ -200,47 +198,60 @@
       color: var(--hacker-green);
       font-size: 1.2rem;
     }
+
+    /* Footer */
+    .portal-footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      text-align: center;
+      padding: 10px;
+      font-size: 0.7rem;
+      color: var(--matrix-green);
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1;
+    }
   </style>
 </head>
 <body>
   <!-- Binary Rain Background -->
   <div class="binary-rain" id="binaryRain"></div>
   
-  <!-- Main Portal Content -->
-  <div class="portal-container">
-    <div class="portal-header">
-      <h1 class="portal-title">INJECTION LABS</h1>
-      <p class="portal-subtitle">CYBER SECURITY TRAINING PLATFORM</p>
-      <hr class="portal-divider">
-    </div>
-    
-    <div class="lab-cards">
-      <!-- SQL Injection Card -->
-      <div class="lab-card" id="sqlLab">
+  <!-- Split Screen Container -->
+  <div class="split-screen">
+    <!-- Left Side - SQL Injection -->
+    <div class="sql-section" id="sqlLab">
+      <div class="section-content">
         <div class="lab-icon">SQL</div>
         <h2 class="lab-title">SQL INJECTION</h2>
         <p class="lab-description">
           Explore classic SQL injection techniques against a vulnerable login form.
           Learn to bypass authentication and extract database information.
         </p>
-        <button class="lab-btn">ENTER SQL LAB</button>
+        <button class="lab-btn">ENTER LAB</button>
       </div>
-      
-      <!-- NoSQL Injection Card -->
-      <div class="lab-card" id="nosqlLab">
+    </div>
+    
+    <!-- Right Side - NoSQL Injection -->
+    <div class="nosql-section" id="nosqlLab">
+      <div class="section-content">
         <div class="lab-icon">NoSQL</div>
         <h2 class="lab-title">NoSQL INJECTION</h2>
         <p class="lab-description">
           Experiment with NoSQL injection attacks targeting MongoDB.
           Discover how to manipulate JSON queries to bypass security.
         </p>
-        <button class="lab-btn">ENTER NoSQL LAB</button>
+        <button class="lab-btn">ENTER LAB</button>
       </div>
     </div>
     
-    <div class="portal-footer">
-      WARNING: FOR EDUCATIONAL PURPOSES ONLY | © 2025 CYBER SECURITY LAB
-    </div>
+    <!-- Center Title -->
+    <div class="center-title">INJECTION LABS</div>
+  </div>
+  
+  <!-- Footer -->
+  <div class="portal-footer">
+    WARNING: FOR EDUCATIONAL PURPOSES ONLY | © 2025 CYBER SECURITY LAB
   </div>
   
   <!-- Terminal Loading Effect -->
@@ -292,12 +303,12 @@
       if (labType === 'sql') {
         loadingText.textContent = "LOADING SQL INJECTION LAB...";
         setTimeout(() => {
-          window.location.href = "SQLi.html";
+          window.location.href = "sql-lab.html";
         }, 2000);
       } else {
         loadingText.textContent = "LOADING NoSQL INJECTION LAB...";
         setTimeout(() => {
-          window.location.href = "NoSQLi.html";
+          window.location.href = "nosql-lab.html";
         }, 2000);
       }
     }
@@ -306,7 +317,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       createBinaryRain();
       
-      // Add click handlers to lab cards
+      // Add click handlers to sections
       document.getElementById('sqlLab').addEventListener('click', () => {
         loadLab('sql');
       });
@@ -319,12 +330,8 @@
       document.querySelectorAll('.lab-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
-          const card = e.target.closest('.lab-card');
-          if (card.id === 'sqlLab') {
-            loadLab('sql');
-          } else {
-            loadLab('nosql');
-          }
+          const section = e.target.closest('.sql-section') ? 'sql' : 'nosql';
+          loadLab(section);
         });
       });
     });
